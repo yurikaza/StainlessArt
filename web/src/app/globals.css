@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #1a1a2e;
+  --navy: #1a1a2e;
+  --steel-silver: #d1d5db;
+  --steel-highlight: #e5e7eb;
+  --steel-shadow: #9ca3af;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--background);
+  color: var(--navy);
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
+}
