@@ -36,81 +36,93 @@ function WireStrand({
 
   return (
     <mesh geometry={geometry}>
-      <meshStandardMaterial
+      <meshPhongMaterial
         color={color}
-        metalness={0.9}
-        roughness={0.18}
+        specular="#ffffff"
+        shininess={90}
+        reflectivity={0.6}
       />
     </mesh>
   );
 }
 
-function RopeGroup() {
-  const groupRef = useRef<THREE.Group>(null);
+type RopeGroupProps = {
+  scrollProgressRef: React.MutableRefObject<number>;
+  reducedMotion: boolean;
+};
+
+function RopeGroup({ scrollProgressRef, reducedMotion }: RopeGroupProps) {
+  const masterRef = useRef<THREE.Group>(null);
+  const leftRef = useRef<THREE.Group>(null);
+  const rightRef = useRef<THREE.Group>(null);
 
   useFrame((_, delta) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.12;
+    const progress = scrollProgressRef.current;
+
+    // Split phase: 0.15 → 0.65 — strands part like a gate
+    const splitAmount = THREE.MathUtils.clamp((progress - 0.15) / 0.5, 0, 1);
+
+    if (masterRef.current && !reducedMotion) {
+      masterRef.current.rotation.y += delta * 0.12 * (1 - splitAmount * 0.9);
+    }
+
+    if (leftRef.current && rightRef.current) {
+      const offset = reducedMotion ? 0 : splitAmount * 3.2;
+      leftRef.current.position.x = THREE.MathUtils.lerp(
+        leftRef.current.position.x,
+        -offset,
+        0.08
+      );
+      rightRef.current.position.x = THREE.MathUtils.lerp(
+        rightRef.current.position.x,
+        offset,
+        0.08
+      );
     }
   });
 
+  const subFiberProps = (i: number, phase: number) => {
+    const angle = (i * Math.PI) / 3;
+    return {
+      turns: 18,
+      height: 6,
+      helixRadius: 0.095 + 0.04 * Math.cos(angle) * 0.3,
+      tubeRadius: 0.012,
+      phase: phase + angle * 0.4,
+    };
+  };
+
   return (
-    <group ref={groupRef} rotation={[0.2, 0, 0.05]}>
-      {/* Strand A */}
-      <WireStrand
-        turns={18}
-        height={6}
-        helixRadius={0.095}
-        tubeRadius={0.06}
-        phase={0}
-        color="#c8cdd4"
-      />
-      {/* Strand B */}
-      <WireStrand
-        turns={18}
-        height={6}
-        helixRadius={0.095}
-        tubeRadius={0.06}
-        phase={Math.PI}
-        color="#bec3ca"
-      />
-      {/* Visible sub-fibers on Strand A */}
-      {[0, 1, 2, 3, 4, 5].map((i) => {
-        const angle = (i * Math.PI) / 3;
-        const orbit = 0.04;
-        return (
-          <WireStrand
-            key={`a-${i}`}
-            turns={18}
-            height={6}
-            helixRadius={0.095 + orbit * Math.cos(angle) * 0.3}
-            tubeRadius={0.012}
-            phase={angle * 0.4}
-            color="#d5dae0"
-          />
-        );
-      })}
-      {/* Visible sub-fibers on Strand B */}
-      {[0, 1, 2, 3, 4, 5].map((i) => {
-        const angle = (i * Math.PI) / 3;
-        const orbit = 0.04;
-        return (
-          <WireStrand
-            key={`b-${i}`}
-            turns={18}
-            height={6}
-            helixRadius={0.095 + orbit * Math.cos(angle) * 0.3}
-            tubeRadius={0.012}
-            phase={Math.PI + angle * 0.4}
-            color="#cdd2d8"
-          />
-        );
-      })}
+    <group ref={masterRef} rotation={[0.2, 0, 0.05]}>
+      {/* Left strand group */}
+      <group ref={leftRef}>
+        <WireStrand turns={18} height={6} helixRadius={0.095} tubeRadius={0.06} phase={0} color="#7a8899" />
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <WireStrand key={`a-${i}`} {...subFiberProps(i, 0)} color="#8a99aa" />
+        ))}
+      </group>
+
+      {/* Right strand group */}
+      <group ref={rightRef}>
+        <WireStrand turns={18} height={6} helixRadius={0.095} tubeRadius={0.06} phase={Math.PI} color="#6e7d8c" />
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <WireStrand key={`b-${i}`} {...subFiberProps(i, Math.PI)} color="#8090a0" />
+        ))}
+      </group>
     </group>
   );
 }
 
-export default function WireRope3D() {
+type WireRope3DProps = {
+  scrollProgressRef: React.MutableRefObject<number>;
+};
+
+export default function WireRope3D({ scrollProgressRef }: WireRope3DProps) {
+  const reducedMotion =
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
+
   return (
     <div className="w-full h-full">
       <Canvas
@@ -118,11 +130,12 @@ export default function WireRope3D() {
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
       >
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 5, 5]} intensity={1.5} color="#ffffff" />
-        <directionalLight position={[-3, 3, -2]} intensity={0.6} color="#e0e5ec" />
-        <pointLight position={[0, 4, 3]} intensity={0.8} color="#ffffff" />
-        <RopeGroup />
+        <ambientLight intensity={0.5} />
+        <directionalLight position={[3, 5, 4]} intensity={2.5} color="#ffffff" />
+        <directionalLight position={[-4, 2, -3]} intensity={1.2} color="#dde4ec" />
+        <pointLight position={[0, 4, 3]} intensity={1.5} color="#ffffff" />
+        <pointLight position={[3, -2, 1]} intensity={0.8} color="#c8d8e8" />
+        <RopeGroup scrollProgressRef={scrollProgressRef} reducedMotion={reducedMotion} />
       </Canvas>
     </div>
   );

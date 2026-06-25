@@ -1,12 +1,35 @@
 @import "tailwindcss";
 
+/* Neue Haas Grotesk Display Pro — local */
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayXXThin.ttf') format('truetype'); font-weight: 100; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayXXThinItalic.ttf') format('truetype'); font-weight: 100; font-style: italic; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayXThin.ttf') format('truetype'); font-weight: 200; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayXThinItalic.ttf') format('truetype'); font-weight: 200; font-style: italic; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayThin.ttf') format('truetype'); font-weight: 300; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayThinItalic.ttf') format('truetype'); font-weight: 300; font-style: italic; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayLight.ttf') format('truetype'); font-weight: 350; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayLightItalic.ttf') format('truetype'); font-weight: 350; font-style: italic; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayRoman.ttf') format('truetype'); font-weight: 400; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayRomanItalic.ttf') format('truetype'); font-weight: 400; font-style: italic; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayMediu.ttf') format('truetype'); font-weight: 500; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayMediumItalic.ttf') format('truetype'); font-weight: 500; font-style: italic; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayBold.ttf') format('truetype'); font-weight: 700; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayBoldItalic.ttf') format('truetype'); font-weight: 700; font-style: italic; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayBlack.ttf') format('truetype'); font-weight: 900; font-style: normal; }
+@font-face { font-family: 'NeueHaasDisplay'; src: url('/neue-haas-grotesk-display-pro-cdnfonts/NeueHaasDisplayBlackItalic.ttf') format('truetype'); font-weight: 900; font-style: italic; }
+
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a2e;
+  /* Karyamoni V2 palette */
+  --ink: #0d0f14;
+  --paper: #f5f5f0;
+  --mist: #e8e9eb;
   --navy: #1a1a2e;
-  --steel-silver: #d1d5db;
+  --steel-silver: #c8cdd4;
   --steel-highlight: #e5e7eb;
   --steel-shadow: #9ca3af;
+  --accent-orange: #e85d04;
+  --background: #ffffff;
+  --foreground: #1a1a2e;
 }
 
 * {
@@ -15,13 +38,44 @@
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
+html,
+body {
+  overflow-x: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--navy);
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
+  font-family: 'NeueHaasDisplay', Arial, Helvetica, sans-serif;
+}
+
+/* Typography utilities — Karyamoni V2 "10:1 scale contrast" */
+.display-type {
+  font-size: clamp(4rem, 12vw, 10rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+}
+
+.body-intimate {
+  font-size: 14px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+}
+
+.mono {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+}
+
+/* Subtle brushed-metal grain texture on section backgrounds */
+.metal-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
